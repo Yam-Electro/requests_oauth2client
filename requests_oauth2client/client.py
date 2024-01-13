@@ -1,5 +1,6 @@
 """This module contains the `OAuth2Client` class."""
 from __future__ import annotations
+from enum import verify
 
 from typing import Any, Callable, Iterable, TypeVar
 
@@ -144,7 +145,6 @@ class OAuth2Client:
         code_challenge_method: str = "S256",
         authorization_response_iss_parameter_supported: bool = False,
         session: requests.Session | None = None,
-        verify: bool | None = True,
         **extra_metadata: Any,
         
     ):
@@ -265,6 +265,7 @@ class OAuth2Client:
         
         requests_kwargs.setdefault("headers", {})
         requests_kwargs["headers"]["Accept"] = accept
+        requests_kwargs["verify"] = False
 
         response = self.session.request(
             method,
@@ -298,8 +299,7 @@ class OAuth2Client:
             timeout=timeout,
             on_success=self.parse_token_response,
             on_failure=self.on_token_error,
-            **requests_kwargs,
-            #verify
+            **requests_kwargs
         )
 
     def parse_token_response(self, response: requests.Response) -> BearerToken:
