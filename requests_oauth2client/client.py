@@ -277,7 +277,7 @@ class OAuth2Client:
         return on_failure(response)
 
     def token_request(
-        self, data: dict[str, Any], timeout: int = 10, verify=self.verify, **requests_kwargs: Any
+        self, data: dict[str, Any], timeout: int = 10, verify=verify, **requests_kwargs: Any
     ) -> BearerToken:
         """Send a request to the token endpoint.
 
