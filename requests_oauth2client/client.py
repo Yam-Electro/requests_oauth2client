@@ -144,7 +144,9 @@ class OAuth2Client:
         code_challenge_method: str = "S256",
         authorization_response_iss_parameter_supported: bool = False,
         session: requests.Session | None = None,
+        verify: bool | None = True,
         **extra_metadata: Any,
+        
     ):
         if authorization_response_iss_parameter_supported and not issuer:
             raise ValueError(
@@ -238,7 +240,6 @@ class OAuth2Client:
         on_failure: Callable[[requests.Response], T],
         accept: str = "application/json",
         method: str = "POST",
-        verify = True,
         **requests_kwargs: Any,
     ) -> T:
         """Send a request to one of the endpoints.
@@ -269,7 +270,6 @@ class OAuth2Client:
             method,
             endpoint_uri,
             **requests_kwargs,
-            verify
         )
         if response.ok:
             return on_success(response)
@@ -277,7 +277,7 @@ class OAuth2Client:
         return on_failure(response)
 
     def token_request(
-        self, data: dict[str, Any], timeout: int = 10, **requests_kwargs: Any
+        self, data: dict[str, Any], timeout: int = 10, verify=self.verify, **requests_kwargs: Any
     ) -> BearerToken:
         """Send a request to the token endpoint.
 
@@ -299,6 +299,7 @@ class OAuth2Client:
             on_success=self.parse_token_response,
             on_failure=self.on_token_error,
             **requests_kwargs,
+            verify = verify
         )
 
     def parse_token_response(self, response: requests.Response) -> BearerToken:
